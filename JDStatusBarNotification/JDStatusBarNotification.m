@@ -276,7 +276,8 @@
     if (self.activeStyle.animationType == JDStatusBarAnimationTypeFade) {
       self.topBar.alpha = 0.0;
     } else {
-      self.topBar.transform = CGAffineTransformMakeTranslation(0, -self.topBar.frame.size.height);
+        float backToY = self.topBar.frame.size.height + self.topBar.frame.origin.y;
+      self.topBar.transform = CGAffineTransformMakeTranslation(0, -backToY);
     }
   };
 
@@ -453,7 +454,8 @@
 
     JDStatusBarStyle *style = self.activeStyle ?: self.defaultStyle;
     if (style.animationType != JDStatusBarAnimationTypeFade) {
-      self.topBar.transform = CGAffineTransformMakeTranslation(0, -self.topBar.frame.size.height);
+        float startAtY = self.topBar.frame.size.height + self.topBar.frame.origin.y;
+      self.topBar.transform = CGAffineTransformMakeTranslation(0, -startAtY);
     } else {
       self.topBar.alpha = 0.0;
     }
@@ -489,8 +491,13 @@
   if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 && height > 20.0) {
     yPos = -height/2.0;
   }
-
-  _topBar.frame = CGRectMake(0, yPos, width, height);
+    
+    // Apply special fix for the iPhone X new status bar
+    if (isIphoneXPortraitStatusBar()) {
+        _topBar.frame = CGRectMake(0, 30, width, 20);
+    } else {
+        _topBar.frame = CGRectMake(0, yPos, width, height);
+    }
 }
 
 - (void)willChangeStatusBarFrame:(NSNotification*)notification;

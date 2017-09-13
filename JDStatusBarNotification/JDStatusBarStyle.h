@@ -75,3 +75,21 @@ typedef NS_ENUM(NSInteger, JDStatusBarProgressBarPosition) {
 
 @end
 
+static BOOL isIphoneX() {
+    static BOOL result = false;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        static float height = 812;
+        if ((UIScreen.mainScreen.bounds.size.width == height
+             || UIScreen.mainScreen.bounds.size.height == height)
+            && UIScreen.mainScreen.scale == 3) {
+            result = true;
+        }
+    });
+    return result;
+}
+
+static BOOL isIphoneXPortraitStatusBar() {
+    return isIphoneX() && UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation);
+}
+
